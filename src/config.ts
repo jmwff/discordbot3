@@ -1,0 +1,36 @@
+import dotenv from "dotenv";
+dotenv.config();
+
+const departments: Record<string, string> = {};
+const deptRolesInput = process.env.DEPARTMENT_ROLE_IDS || "LSPD:1450615073008783536, BCSO:1506021416296775750, SASP:1450616749384011788, FIRE:1450617987085111430";
+if (deptRolesInput) {
+  deptRolesInput.split(",").forEach(pair => {
+    const parts = pair.split(":");
+    if (parts.length >= 2) {
+      const name = parts[0].trim().toUpperCase();
+      const id = parts[1].trim();
+      if (name && id) departments[name] = id;
+    }
+  });
+}
+
+export const CONFIG = {
+  token: process.env.DISCORD_TOKEN || "MTA5MzE0OTU0ODM3MTY0MDQxMg.GzV9xq.rR_uN8b8KzF9z7p2z6q5s4t3_zXy",
+  primaryGuildId: process.env.PRIMARY_GUILD_ID || "1397663569645932664",
+  allowedGuilds: (process.env.ALLOWED_GUILD_IDS || "1397663569645932664, 1450615073008783536, 1506021416296775750, 1450616749384011788, 1450617987085111430, 1450625412127391946, 1450624762610061354, 1448423121164963900").split(",").map(id => id.trim()).filter(Boolean),
+  serverIp: "147.135.30.12",
+  serverPort: "30120",
+  cadLink: "https://cad.eastbayrp.net",
+  playersServiceIp: process.env.PLAYERS_SERVICE_IP || "147.135.30.12:30120",
+  roles: {
+    member: process.env.MEMBER_ROLE_ID || "1518419263289823244",
+    staffInTraining: process.env.STAFF_IN_TRAINING_ROLE_ID || "1518419261280751797",
+    staff: process.env.STAFF_ROLE_ID || "1518419260156678224",
+    seniorStaff: process.env.SENIOR_STAFF_ROLE_ID || "1518419258999046244",
+    juniorAdmin: process.env.JUNIOR_ADMIN_ROLE_ID || "1518419257958989847",
+    admin: process.env.ADMIN_ROLE_ID || "1518419256931516546",
+    communityManager: process.env.COMMUNITY_MANAGER_ROLE_ID || "1518419252946665663",
+    communityLeadership: process.env.COMMUNITY_LEADERSHIP_ROLE_ID || "1518419249419391131",
+    departments
+  }
+};
