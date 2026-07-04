@@ -46,7 +46,7 @@ export const players: SlashCommand = {
         .setTitle("🎮 Server Players")
         .setColor(0x2ecc71)
         .setDescription(`**${data.length}** player(s) currently online:\n\n${lines.join("\n")}`)
-        .setFooter({ text: data.length > 25 ? `Showing first 25 of ${data.length} players` : `${CONFIG.serverIp}:${CONFIG.serverPort}` })
+        .setFooter({ text: data.length > 25 ? `Showing first 25 of ${data.length} players` : CONFIG.serverName })
         .setTimestamp();
 
       return interaction.editReply({ embeds: [embed] });
@@ -54,7 +54,7 @@ export const players: SlashCommand = {
       const embed = new EmbedBuilder()
         .setTitle("⚠️ Unable to Reach Server")
         .setColor(0xe67e22)
-        .setDescription(`Could not fetch the player list from \`${CONFIG.playersServiceIp}\`. The server may be offline or unreachable.`)
+        .setDescription("Could not fetch the player list right now. The server may be offline or unreachable.")
         .setTimestamp();
       return interaction.editReply({ embeds: [embed] });
     }
