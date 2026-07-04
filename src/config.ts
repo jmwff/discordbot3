@@ -25,8 +25,8 @@ export const CONFIG = {
   token: process.env.DISCORD_TOKEN,
   primaryGuildId: process.env.PRIMARY_GUILD_ID || "1397663569645932664",
   allowedGuilds: (process.env.ALLOWED_GUILD_IDS || "1397663569645932664, 1450615073008783536, 1506021416296775750, 1450616749384011788, 1450617987085111430, 1450625412127391946, 1450624762610061354, 1448423121164963900").split(",").map(id => id.trim()).filter(Boolean),
-  serverIp: "147.135.30.12",
-  serverPort: "30120",
+  serverIp: "78.108.218.193",
+  serverPort: "30145",
   cadLink: "https://cad.eastbayrp.net",
   playersServiceIp: process.env.PLAYERS_SERVICE_IP || "78.108.218.193:30145",
   roles: {
