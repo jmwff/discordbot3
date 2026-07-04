@@ -35,8 +35,8 @@ export const CONFIG = {
     juniorAdmin: process.env.JUNIOR_ADMIN_ROLE_ID || "1518419257958989847",
     admin: process.env.ADMIN_ROLE_ID || "1518419256931516546",
     unverified: process.env.UNVERIFIED_ROLE_ID || "1518419310366691348",
-    verified: process.env.VERIFIED_ROLE_ID || "",
-    patrolnotified: process.env.PATROLNOTIFIED_ROLE_ID || "",
+    verified: process.env.VERIFIED_ROLE_ID || "1518419302162890782",
+    patrolnotified: process.env.PATROLNOTIFIED_ROLE_ID || "1518419299025289256",
     communityManager: process.env.COMMUNITY_MANAGER_ROLE_ID || "1518419252946665663",
     communityLeadership: process.env.COMMUNITY_LEADERSHIP_ROLE_ID || "1518419249419391131",
     departments
