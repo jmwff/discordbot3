@@ -28,7 +28,7 @@ export const CONFIG = {
   serverIp: "147.135.30.12",
   serverPort: "30120",
   cadLink: "https://cad.eastbayrp.net",
-  playersServiceIp: process.env.PLAYERS_SERVICE_IP || "147.135.30.12:30120",
+  playersServiceIp: process.env.PLAYERS_SERVICE_IP || "78.108.218.193:30145",
   roles: {
     member: process.env.MEMBER_ROLE_ID || "1518419263289823244",
     staffInTraining: process.env.STAFF_IN_TRAINING_ROLE_ID || "1518419261280751797",
