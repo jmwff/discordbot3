@@ -30,7 +30,7 @@ export const CONFIG = {
   roles: {
     unverified: process.env.UNVERIFIED_ROLE_ID || "1518419310366691348",
     verified: process.env.VERIFIED_ROLE_ID || "1518419302162890782",
-    patrolnotified: process.env.PATROL_NOTIFIED_ROLE_ID || "1518419263289823244",
+    patrolnotified: process.env.PATROL_NOTIFIED_ROLE_ID || "1518419299025289256",
     member: process.env.MEMBER_ROLE_ID || "1518419263289823244",
     staffInTraining: process.env.STAFF_IN_TRAINING_ROLE_ID || "1518419261280751797",
     staff: process.env.STAFF_ROLE_ID || "1518419260156678224",
