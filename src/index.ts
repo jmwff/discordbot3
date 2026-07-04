@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, Collection, REST, Routes, EmbedBuilder } from "discord.js";
+import { Client, GatewayIntentBits, Collection, REST, Routes, EmbedBuilder, ActivityType } from "discord.js";
 import fs from "fs";
 import path from "path";
 import { CONFIG } from "./config";
@@ -70,9 +70,26 @@ export function isLeadership(member: any): boolean {
 // Global scope restrictions
 const PRIMARY_ONLY_COMMANDS = ["assign", "onboard", "transfer-user", "resign", "guildmanager", "webrole"];
 
+// Bot status rotation — edit this list to change what cycles through.
+const STATUS_ROTATION: { name: string; type: ActivityType }[] = [
+  { name: "Waiting for the release", type: ActivityType.Playing },
+  { name: "Watching Over The East Bay Project", type: ActivityType.Watching },
+  { name: "/players for server pop", type: ActivityType.Listening },
+  { name: "the streets of San Andreas", type: ActivityType.Playing }
+];
+const STATUS_ROTATION_INTERVAL_MS = 15_000;
+
 client.once("ready", async () => {
   console.log(`Logged in as ${client.user?.tag}!\nGuilds initialized: ${CONFIG.allowedGuilds.length}`);
-  client.user?.setActivity("The East Bay | /status");
+
+  let statusIndex = 0;
+  const applyNextStatus = () => {
+    const status = STATUS_ROTATION[statusIndex % STATUS_ROTATION.length];
+    client.user?.setActivity(status.name, { type: status.type });
+    statusIndex++;
+  };
+  applyNextStatus();
+  setInterval(applyNextStatus, STATUS_ROTATION_INTERVAL_MS);
 
   // Load and register slash commands in allowed guilds
   const rest = new REST({ version: "10" }).setToken(CONFIG.token);
