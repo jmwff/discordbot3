@@ -1,6 +1,7 @@
 import { SlashCommandBuilder, EmbedBuilder, TextChannel } from "discord.js";
 import { SlashCommand, isStaff } from "../../index";
 import { CONFIG } from "../../config";
+import { buildAttendanceRow } from "../../utils/attendanceStore";
 
 const PATROL_NOTIFY_CHANNEL_ID = "1518419485311369286";
 
@@ -47,6 +48,10 @@ export const patrolnotify: SlashCommand = {
         {
           name: "Connection Details",
           value: `**Production Server:** connect dg334yj`
+        },
+        {
+          name: "Members Attending (0)",
+          value: "No one has confirmed attendance yet."
         }
       )
       .setFooter({ text: "The East Bay Project Roleplay" })
@@ -55,7 +60,8 @@ export const patrolnotify: SlashCommand = {
     try {
       await channelOption.send({
         content: `<@&${CONFIG.roles.patrolnotified}>`,
-        embeds: [embed]
+        embeds: [embed],
+        components: [buildAttendanceRow()]
       });
     } catch {
       return interaction.reply({ content: "❌ I don't have permission to send messages in that channel.", ephemeral: true });

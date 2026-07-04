@@ -2,6 +2,14 @@ import { Client, GatewayIntentBits, Collection, REST, Routes, EmbedBuilder } fro
 import fs from "fs";
 import path from "path";
 import { CONFIG } from "./config";
+import {
+  ATTEND_BUTTON_ID,
+  NOT_ATTEND_BUTTON_ID,
+  setAttendance,
+  getAttendingCount,
+  buildAttendanceFieldValue,
+  buildAttendanceRow
+} from "./utils/attendanceStore";
 
 // Setup Bot Client
 const client = new Client({
@@ -86,6 +94,33 @@ client.once("ready", async () => {
 
 // Interaction routing
 client.on("interactionCreate", async (interaction) => {
+  if (interaction.isButton()) {
+    if (interaction.customId === ATTEND_BUTTON_ID || interaction.customId === NOT_ATTEND_BUTTON_ID) {
+      try {
+        const status = interaction.customId === ATTEND_BUTTON_ID ? "attending" : "notattending";
+        setAttendance(interaction.message.id, interaction.user.id, status);
+
+        const count = getAttendingCount(interaction.message.id);
+        const value = buildAttendanceFieldValue(interaction.message.id);
+
+        const sourceEmbed = interaction.message.embeds[0];
+        const updatedFields = sourceEmbed.fields.map(f =>
+          f.name.startsWith("Members Attending")
+            ? { name: `Members Attending (${count})`, value, inline: f.inline }
+            : { name: f.name, value: f.value, inline: f.inline }
+        );
+
+        const updatedEmbed = EmbedBuilder.from(sourceEmbed).setFields(updatedFields);
+
+        await interaction.update({ embeds: [updatedEmbed], components: [buildAttendanceRow()] });
+      } catch (error) {
+        console.error("Error handling patrol attendance button:", error);
+        await interaction.reply({ content: "❌ Something went wrong updating your attendance.", ephemeral: true }).catch(() => null);
+      }
+    }
+    return;
+  }
+
   if (!interaction.isChatInputCommand()) return;
 
   const command = commandsCollection.get(interaction.commandName);
