@@ -1,6 +1,8 @@
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 import { SlashCommand, isStaff } from "../../index";
 import { addWarning, getWarnings } from "../../utils/warningsStore";
+import { CONFIG } from "../../config";
+import { sendLog } from "../../utils/logger";
 
 export const warn: SlashCommand = {
   category: "Staff",
@@ -46,6 +48,8 @@ export const warn: SlashCommand = {
         { name: "Total warnings", value: `${totalWarnings}` }
       )
       .setTimestamp();
+
+    await sendLog(interaction.client, CONFIG.logChannels.warn, EmbedBuilder.from(embed));
 
     return interaction.reply({ embeds: [embed] });
   }

@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 dotenv.config();
-
 const departments: Record<string, string> = {};
 const deptRolesInput = process.env.DEPARTMENT_ROLE_IDS || "MPD:1518419278209093765, BCSO:1518419276413931672, SASP:1518419274719301733, FD:1518419280931061763, SACD:1518419283565088808, CivOps:1518419286077472809";
 if (deptRolesInput) {
@@ -13,14 +12,12 @@ if (deptRolesInput) {
     }
   });
 }
-
 if (!process.env.DISCORD_TOKEN) {
   throw new Error(
     "DISCORD_TOKEN environment variable is not set. Add it in your Railway service's Variables tab — never hardcode bot tokens in source. " +
     "If a token was ever committed to this repo, treat it as compromised and regenerate it in the Discord Developer Portal."
   );
 }
-
 export const CONFIG = {
   token: process.env.DISCORD_TOKEN,
   primaryGuildId: process.env.PRIMARY_GUILD_ID || "1397663569645932664",
@@ -31,17 +28,24 @@ export const CONFIG = {
   cadLink: "https://cad.eastbayrp.net",
   playersServiceIp: process.env.PLAYERS_SERVICE_IP || "147.135.30.12:30120",
   roles: {
-    unverified: process.env.UNVERIFIED_ROLE_ID || "1518419310366691348",
-    patrolnotified: process.env.PATROL_NOTIFIED_ROLE_ID || "1518419299025289256",
-    verified: process.env.VERIFIED_ROLE_ID || "1518419302162890782",
     member: process.env.MEMBER_ROLE_ID || "1518419263289823244",
     staffInTraining: process.env.STAFF_IN_TRAINING_ROLE_ID || "1518419261280751797",
     staff: process.env.STAFF_ROLE_ID || "1518419260156678224",
     seniorStaff: process.env.SENIOR_STAFF_ROLE_ID || "1518419258999046244",
     juniorAdmin: process.env.JUNIOR_ADMIN_ROLE_ID || "1518419257958989847",
     admin: process.env.ADMIN_ROLE_ID || "1518419256931516546",
+    unverified: process.env.UNVERIFIED_ROLE_ID || "1518419310366691348",
+    verified: process.env.VERIFIED_ROLE_ID || "",
+    patrolnotified: process.env.PATROLNOTIFIED_ROLE_ID || "",
     communityManager: process.env.COMMUNITY_MANAGER_ROLE_ID || "1518419252946665663",
     communityLeadership: process.env.COMMUNITY_LEADERSHIP_ROLE_ID || "1518419249419391131",
     departments
+  },
+  logChannels: {
+    kick: process.env.KICK_LOG_CHANNEL_ID || "1523030401201733862",
+    ban: process.env.BAN_LOG_CHANNEL_ID || "1523030660003008714",
+    unban: process.env.UNBAN_LOG_CHANNEL_ID || "1523030472677130350",
+    assign: process.env.ASSIGN_LOG_CHANNEL_ID || "1523030517669433566",
+    warn: process.env.WARN_LOG_CHANNEL_ID || "1518419528223035474"
   }
 };

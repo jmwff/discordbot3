@@ -1,5 +1,7 @@
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 import { SlashCommand, isStaff } from "../../index";
+import { CONFIG } from "../../config";
+import { sendLog } from "../../utils/logger";
 
 export const kick: SlashCommand = {
   category: "Staff",
@@ -47,6 +49,9 @@ export const kick: SlashCommand = {
         { name: "Failed in", value: failedList.length ? failedList.join(", ") : "None" }
       )
       .setTimestamp();
+
+    const logEmbed = EmbedBuilder.from(embed).addFields({ name: "Executed by", value: `${interaction.user.tag} (${interaction.user.id})` });
+    await sendLog(client, CONFIG.logChannels.kick, logEmbed);
 
     return interaction.editReply({ embeds: [embed] });
   }
