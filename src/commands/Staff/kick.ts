@@ -1,23 +1,53 @@
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
-import { SlashCommand, isStaff, isAdmin, isLeadership } from "../../index";
-import fs from "fs";
-import { CONFIG } from "../../config";
+import { SlashCommand, isStaff } from "../../index";
 
-export const ${cmd.name}: SlashCommand = {
+export const kick: SlashCommand = {
   category: "Staff",
   data: new SlashCommandBuilder()
     .setName("kick")
-    .setDescription("Kick a user across all discords/guilds the bot is in.")${optionsBuilder},
+    .setDescription("Kick a user across all discords/guilds the bot is in.")
+    .addUserOption(opt =>
+      opt.setName("user").setDescription("The user to kick").setRequired(true)
+    )
+    .addStringOption(opt =>
+      opt.setName("reason").setDescription("Reason for the kick").setRequired(false)
+    ),
   async execute(interaction) {
-    ${category === "Staff" ? `if (!isStaff(interaction.member)) {
+    if (!isStaff(interaction.member)) {
       return interaction.reply({ content: "❌ You require a **Staff, Admin, or Leadership Role** to run this command.", ephemeral: true });
-    }` : ""}
-    ${category === "Admin" ? `if (!isAdmin(interaction.member)) {
-      return interaction.reply({ content: "❌ You require an **Admin or Leadership Role** to run this command.", ephemeral: true });
-    }` : ""}
-    ${category === "Leadership" ? `if (!isLeadership(interaction.member)) {
-      return interaction.reply({ content: "❌ You require a **Community Manager or Community Leadership Role** to run this command.", ephemeral: true });
-    }` : ""}
-    ${executionBlock}
+    }
+
+    const targetUser = interaction.options.getUser("user", true);
+    const reason = interaction.options.getString("reason") || "No reason provided";
+
+    await interaction.deferReply({ ephemeral: true });
+
+    const client = interaction.client;
+    const succeeded: string[] = [];
+    const failedList: string[] = [];
+
+    for (const [, guild] of client.guilds.cache) {
+      const member = await guild.members.fetch(targetUser.id).catch(() => null);
+      if (!member) continue;
+      try {
+        await member.kick(`${reason} (by ${interaction.user.tag})`);
+        succeeded.push(guild.name);
+      } catch {
+        failedList.push(guild.name);
+      }
+    }
+
+    const embed = new EmbedBuilder()
+      .setTitle("👢 User Kicked")
+      .setColor(0xe67e22)
+      .setDescription(`${targetUser.tag} (${targetUser.id}) has been kicked.`)
+      .addFields(
+        { name: "Reason", value: reason },
+        { name: "Kicked from", value: succeeded.length ? succeeded.join(", ") : "Not found in any guild" },
+        { name: "Failed in", value: failedList.length ? failedList.join(", ") : "None" }
+      )
+      .setTimestamp();
+
+    return interaction.editReply({ embeds: [embed] });
   }
 };

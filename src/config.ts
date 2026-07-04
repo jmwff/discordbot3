@@ -14,8 +14,15 @@ if (deptRolesInput) {
   });
 }
 
+if (!process.env.DISCORD_TOKEN) {
+  throw new Error(
+    "DISCORD_TOKEN environment variable is not set. Add it in your Railway service's Variables tab — never hardcode bot tokens in source. " +
+    "If a token was ever committed to this repo, treat it as compromised and regenerate it in the Discord Developer Portal."
+  );
+}
+
 export const CONFIG = {
-  token: process.env.DISCORD_TOKEN || "MTA5MzE0OTU0ODM3MTY0MDQxMg.GzV9xq.rR_uN8b8KzF9z7p2z6q5s4t3_zXy",
+  token: process.env.DISCORD_TOKEN,
   primaryGuildId: process.env.PRIMARY_GUILD_ID || "1397663569645932664",
   allowedGuilds: (process.env.ALLOWED_GUILD_IDS || "1397663569645932664, 1450615073008783536, 1506021416296775750, 1450616749384011788, 1450617987085111430, 1450625412127391946, 1450624762610061354, 1448423121164963900").split(",").map(id => id.trim()).filter(Boolean),
   serverIp: "147.135.30.12",
