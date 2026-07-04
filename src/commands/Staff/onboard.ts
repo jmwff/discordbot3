@@ -41,6 +41,8 @@ export const onboard: SlashCommand = {
 
     try {
       await member.roles.add(CONFIG.roles.member);
+      await member.roles.add(CONFIG.roles.verified);
+      await member.roles.add(CONFIG.roles.patrolnotified);
       await member.roles.add(departmentRoleId);
     } catch {
       return interaction.editReply({ content: "❌ I couldn't assign roles to that user. Check my role position and permissions." });
