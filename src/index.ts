@@ -122,12 +122,13 @@ import { say } from "./commands/Staff/say";
 import { onboard } from "./commands/Staff/onboard";
 import { warn } from "./commands/Staff/warn";
 import { embedbuilder } from "./commands/Staff/embedbuilder";
+import { patrolnotify } from "./commands/Staff/patrolnotify";
 import { complaint } from "./commands/Member/complaint";
 import { requestrole } from "./commands/Member/requestrole";
 import { players } from "./commands/Member/players";
 import { warnings } from "./commands/Member/warnings";
 
-const allCmds = [assign, ban, unban, kick, mute, nickname, say, onboard, warn, embedbuilder, complaint, requestrole, players, warnings];
+const allCmds = [assign, ban, unban, kick, mute, nickname, say, onboard, warn, embedbuilder, patrolnotify, complaint, requestrole, players, warnings];
 
 for (const cmd of allCmds) {
   commandsCollection.set(cmd.data.name, cmd);
