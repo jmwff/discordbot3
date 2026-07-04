@@ -28,6 +28,9 @@ export const CONFIG = {
   cadLink: "https://cad.eastbayrp.net",
   playersServiceIp: process.env.PLAYERS_SERVICE_IP || "147.135.30.12:30120",
   roles: {
+    unverified: process.env.UNVERIFIED_ROLE_ID || "1518419310366691348",
+    verified: process.env.VERIFIED_ROLE_ID || "1518419302162890782",
+    patrolnotified: process.env.PATROL_NOTIFIED_ROLE_ID || "1518419263289823244",
     member: process.env.MEMBER_ROLE_ID || "1518419263289823244",
     staffInTraining: process.env.STAFF_IN_TRAINING_ROLE_ID || "1518419261280751797",
     staff: process.env.STAFF_ROLE_ID || "1518419260156678224",
