@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const departments: Record<string, string> = {};
-const deptRolesInput = process.env.DEPARTMENT_ROLE_IDS || "LSPD:1450615073008783536, BCSO:1506021416296775750, SASP:1450616749384011788, FIRE:1450617987085111430";
+const deptRolesInput = process.env.DEPARTMENT_ROLE_IDS || "MPD:1518419278209093765, BCSO:1518419276413931672, SASP:1518419274719301733, FD:1518419280931061763, SACD:1518419283565088808, CivOps:1518419286077472809";
 if (deptRolesInput) {
   deptRolesInput.split(",").forEach(pair => {
     const parts = pair.split(":");
@@ -37,8 +37,4 @@ export const CONFIG = {
     seniorStaff: process.env.SENIOR_STAFF_ROLE_ID || "1518419258999046244",
     juniorAdmin: process.env.JUNIOR_ADMIN_ROLE_ID || "1518419257958989847",
     admin: process.env.ADMIN_ROLE_ID || "1518419256931516546",
-    communityManager: process.env.COMMUNITY_MANAGER_ROLE_ID || "1518419252946665663",
-    communityLeadership: process.env.COMMUNITY_LEADERSHIP_ROLE_ID || "1518419249419391131",
-    departments
-  }
-};
+    communityManager: process.env.COMMUNITY_MANAGER_ROLE_ID ||
