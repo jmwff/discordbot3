@@ -5,8 +5,7 @@ import { CONFIG } from "./config";
 import {
   ATTEND_BUTTON_ID,
   NOT_ATTEND_BUTTON_ID,
-  setAttendance,
-  getAttendingCount,
+  parseAttendingIds,
   buildAttendanceFieldValue,
   buildAttendanceRow
 } from "./utils/attendanceStore";
@@ -125,16 +124,20 @@ client.on("interactionCreate", async (interaction) => {
   if (interaction.isButton()) {
     if (interaction.customId === ATTEND_BUTTON_ID || interaction.customId === NOT_ATTEND_BUTTON_ID) {
       try {
-        const status = interaction.customId === ATTEND_BUTTON_ID ? "attending" : "notattending";
-        setAttendance(interaction.message.id, interaction.user.id, status);
-
-        const count = getAttendingCount(interaction.message.id);
-        const value = buildAttendanceFieldValue(interaction.message.id);
-
         const sourceEmbed = interaction.message.embeds[0];
+        const attendingField = sourceEmbed.fields.find(f => f.name.startsWith("Members Attending"));
+        let ids = attendingField ? parseAttendingIds(attendingField.value) : [];
+
+        if (interaction.customId === ATTEND_BUTTON_ID) {
+          if (!ids.includes(interaction.user.id)) ids.push(interaction.user.id);
+        } else {
+          ids = ids.filter(id => id !== interaction.user.id);
+        }
+
+        const value = buildAttendanceFieldValue(ids);
         const updatedFields = sourceEmbed.fields.map(f =>
           f.name.startsWith("Members Attending")
-            ? { name: `Members Attending (${count})`, value, inline: f.inline }
+            ? { name: `Members Attending (${ids.length})`, value, inline: f.inline }
             : { name: f.name, value: f.value, inline: f.inline }
         );
 
