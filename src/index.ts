@@ -72,8 +72,8 @@ const PRIMARY_ONLY_COMMANDS = ["assign", "onboard", "transfer-user", "resign", "
 
 // Bot status rotation — edit this list to change what cycles through.
 const STATUS_ROTATION: { name: string; type: ActivityType }[] = [
-  { name: "Waiting for the release", type: ActivityType.Playing },
-  { name: "Watching Over The East Bay Project", type: ActivityType.Watching },
+  { name: "The East Bay | /status", type: ActivityType.Playing },
+  { name: "over East Bay Roleplay", type: ActivityType.Watching },
   { name: "/players for server pop", type: ActivityType.Listening },
   { name: "the streets of San Andreas", type: ActivityType.Playing }
 ];
@@ -106,6 +106,17 @@ client.once("ready", async () => {
     console.log("Successfully registered commands across all guilds.");
   } catch (error) {
     console.error("Error registering commands:", error);
+  }
+});
+
+// Auto-assign the Unverified role to new members when they join
+client.on("guildMemberAdd", async (member) => {
+  if (!CONFIG.roles.unverified) return;
+  try {
+    await member.roles.add(CONFIG.roles.unverified);
+    console.log(`Assigned Unverified role to ${member.user.tag} in ${member.guild.name}`);
+  } catch (error) {
+    console.error(`Failed to assign Unverified role to ${member.user.tag} in ${member.guild.name}:`, error);
   }
 });
 
