@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, Collection, REST, Routes, EmbedBuilder, ActivityType } from "discord.js";
+import { Client, GatewayIntentBits, Collection, REST, Routes, EmbedBuilder, ActivityType, TextChannel } from "discord.js";
 import fs from "fs";
 import path from "path";
 import { CONFIG } from "./config";
@@ -121,6 +121,46 @@ client.on("guildMemberAdd", async (member) => {
 
 // Interaction routing
 client.on("interactionCreate", async (interaction) => {
+  if (interaction.isModalSubmit()) {
+    if (interaction.customId.startsWith("embedbuilder_modal_")) {
+      const channelId = interaction.customId.replace("embedbuilder_modal_", "");
+      try {
+        const channel = (await interaction.client.channels.fetch(channelId).catch(() => null)) as TextChannel | null;
+        if (!channel || !("send" in channel)) {
+          return interaction.reply({ content: "❌ I can't send an embed to that channel.", ephemeral: true });
+        }
+
+        const title = interaction.fields.getTextInputValue("title");
+        const description = interaction.fields.getTextInputValue("description");
+        const colorInput = interaction.fields.getTextInputValue("color");
+        const image = interaction.fields.getTextInputValue("image");
+        const footer = interaction.fields.getTextInputValue("footer");
+
+        let color = 0x5865f2;
+        if (colorInput) {
+          const parsed = parseInt(colorInput.replace("#", ""), 16);
+          if (!Number.isNaN(parsed)) color = parsed;
+        }
+
+        const embed = new EmbedBuilder()
+          .setTitle(title)
+          .setDescription(description)
+          .setColor(color)
+          .setTimestamp();
+
+        if (image) embed.setThumbnail(image);
+        if (footer) embed.setFooter({ text: footer });
+
+        await channel.send({ embeds: [embed] });
+        await interaction.reply({ content: `✅ Embed sent to ${channel}.`, ephemeral: true });
+      } catch (error) {
+        console.error("Error handling embedbuilder modal submission:", error);
+        await interaction.reply({ content: "❌ Something went wrong sending that embed.", ephemeral: true }).catch(() => null);
+      }
+    }
+    return;
+  }
+
   if (interaction.isButton()) {
     if (interaction.customId === ATTEND_BUTTON_ID || interaction.customId === NOT_ATTEND_BUTTON_ID) {
       try {
