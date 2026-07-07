@@ -235,16 +235,32 @@ client.on("interactionCreate", async (interaction) => {
         if (rolesToAdd.length) await fanMember.roles.add(rolesToAdd);
         if (rolesToRemove.length) await fanMember.roles.remove(rolesToRemove);
 
-        if (!rolesToAdd.length && !rolesToRemove.length) {
+        let nicknameSynced = false;
+        let nicknameError = false;
+        const mainNickname = mainMember.nickname ?? mainMember.user.username;
+        if (fanMember.nickname !== mainNickname) {
+          try {
+            await fanMember.setNickname(mainNickname, "Synced from main server via Verify Role");
+            nicknameSynced = true;
+          } catch (error) {
+            nicknameError = true;
+            console.error(`Failed to sync nickname for ${fanMember.user.tag} in fan server:`, error);
+          }
+        }
+
+        if (!rolesToAdd.length && !rolesToRemove.length && !nicknameSynced) {
           return interaction.reply({
             content: desiredFanRoles.length
-              ? "✅ Your roles are already up to date."
+              ? `✅ Your roles are already up to date.${nicknameError ? " (Couldn't update your nickname — please contact staff.)" : ""}`
               : "⚠️ No matching department or staff roles were found on your main server account.",
             ephemeral: true
           });
         }
 
-        return interaction.reply({ content: "✅ Your roles have been updated to match the main server.", ephemeral: true });
+        return interaction.reply({
+          content: `✅ Your roles have been updated to match the main server.${nicknameError ? " (Couldn't update your nickname — please contact staff.)" : ""}`,
+          ephemeral: true
+        });
       } catch (error) {
         console.error("Error handling verify role button:", error);
         await interaction.reply({ content: "❌ Something went wrong verifying your role. Please contact staff.", ephemeral: true }).catch(() => null);
