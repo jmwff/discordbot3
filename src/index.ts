@@ -235,6 +235,15 @@ client.on("interactionCreate", async (interaction) => {
         if (rolesToAdd.length) await fanMember.roles.add(rolesToAdd);
         if (rolesToRemove.length) await fanMember.roles.remove(rolesToRemove);
 
+        // Best-effort: remove the join autorole now that they've verified.
+        // If it's already gone (or fails for any other reason), don't let that
+        // stop the rest of the verification from succeeding.
+        try {
+          await fanMember.roles.remove(FAN_SERVER_AUTOROLE_ID);
+        } catch (error) {
+          console.error(`Could not remove fan server autorole from ${fanMember.user.tag} (likely already removed):`, error);
+        }
+
         let nicknameSynced = false;
         let nicknameError = false;
         const mainNickname = mainMember.nickname ?? mainMember.user.username;
