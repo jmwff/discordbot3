@@ -140,13 +140,26 @@ client.once("ready", async () => {
 });
 
 // Auto-assign the Unverified role to new members when they join
+const FAN_SERVER_GUILD_ID = "1423139826408099992";
+const FAN_SERVER_AUTOROLE_ID = "1522269044697202688";
+
 client.on("guildMemberAdd", async (member) => {
-  if (!CONFIG.roles.unverified) return;
-  try {
-    await member.roles.add(CONFIG.roles.unverified);
-    console.log(`Assigned Unverified role to ${member.user.tag} in ${member.guild.name}`);
-  } catch (error) {
-    console.error(`Failed to assign Unverified role to ${member.user.tag} in ${member.guild.name}:`, error);
+  if (CONFIG.roles.unverified) {
+    try {
+      await member.roles.add(CONFIG.roles.unverified);
+      console.log(`Assigned Unverified role to ${member.user.tag} in ${member.guild.name}`);
+    } catch (error) {
+      console.error(`Failed to assign Unverified role to ${member.user.tag} in ${member.guild.name}:`, error);
+    }
+  }
+
+  if (member.guild.id === FAN_SERVER_GUILD_ID) {
+    try {
+      await member.roles.add(FAN_SERVER_AUTOROLE_ID);
+      console.log(`Assigned fan server autorole to ${member.user.tag} in ${member.guild.name}`);
+    } catch (error) {
+      console.error(`Failed to assign fan server autorole to ${member.user.tag} in ${member.guild.name}:`, error);
+    }
   }
 });
 
