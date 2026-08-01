@@ -50,8 +50,16 @@ export const patrolnotify: SlashCommand = {
           value: `**Production Server:** connect dg334yj`
         },
         {
-          name: "Members Attending (0)",
-          value: "No one has confirmed attendance yet."
+          name: "Attending (0)",
+          value: "No one has confirmed yet."
+        },
+        {
+          name: "Tentative (0)",
+          value: "No one has confirmed yet."
+        },
+        {
+          name: "Not Attending (0)",
+          value: "No one has confirmed yet."
         }
       )
       .setFooter({ text: "The East Bay Project Roleplay" })
