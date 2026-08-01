@@ -67,7 +67,7 @@ export const patrolnotify: SlashCommand = {
 
     try {
       await channelOption.send({
-        content: `<@&${CONFIG.roles.communityLeadership}>`,
+        content: `<@&${CONFIG.roles.patrolnotified}>`,
         embeds: [embed],
         components: [buildAttendanceRow()]
       });
