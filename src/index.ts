@@ -4,7 +4,11 @@ import path from "path";
 import { CONFIG } from "./config";
 import {
   ATTEND_BUTTON_ID,
+  TENTATIVE_BUTTON_ID,
   NOT_ATTEND_BUTTON_ID,
+  ATTENDING_FIELD_PREFIX,
+  TENTATIVE_FIELD_PREFIX,
+  NOT_ATTENDING_FIELD_PREFIX,
   parseAttendingIds,
   buildAttendanceFieldValue,
   buildAttendanceRow
@@ -277,24 +281,43 @@ client.on("interactionCreate", async (interaction) => {
       return;
     }
 
-    if (interaction.customId === ATTEND_BUTTON_ID || interaction.customId === NOT_ATTEND_BUTTON_ID) {
+    if (
+      interaction.customId === ATTEND_BUTTON_ID ||
+      interaction.customId === TENTATIVE_BUTTON_ID ||
+      interaction.customId === NOT_ATTEND_BUTTON_ID
+    ) {
       try {
         const sourceEmbed = interaction.message.embeds[0];
-        const attendingField = sourceEmbed.fields.find(f => f.name.startsWith("Members Attending"));
-        let ids = attendingField ? parseAttendingIds(attendingField.value) : [];
+        const userId = interaction.user.id;
 
-        if (interaction.customId === ATTEND_BUTTON_ID) {
-          if (!ids.includes(interaction.user.id)) ids.push(interaction.user.id);
-        } else {
-          ids = ids.filter(id => id !== interaction.user.id);
-        }
+        const getIds = (prefix: string) => {
+          const field = sourceEmbed.fields.find(f => f.name.startsWith(prefix));
+          return field ? parseAttendingIds(field.value) : [];
+        };
 
-        const value = buildAttendanceFieldValue(ids);
-        const updatedFields = sourceEmbed.fields.map(f =>
-          f.name.startsWith("Members Attending")
-            ? { name: `Members Attending (${ids.length})`, value, inline: f.inline }
-            : { name: f.name, value: f.value, inline: f.inline }
-        );
+        // Remove the clicker from all three lists first, then add them to
+        // whichever one matches the button they just pressed — so they're
+        // only ever in one section at a time.
+        let attendingIds = getIds(ATTENDING_FIELD_PREFIX).filter(id => id !== userId);
+        let tentativeIds = getIds(TENTATIVE_FIELD_PREFIX).filter(id => id !== userId);
+        let notAttendingIds = getIds(NOT_ATTENDING_FIELD_PREFIX).filter(id => id !== userId);
+
+        if (interaction.customId === ATTEND_BUTTON_ID) attendingIds.push(userId);
+        else if (interaction.customId === TENTATIVE_BUTTON_ID) tentativeIds.push(userId);
+        else notAttendingIds.push(userId);
+
+        const updatedFields = sourceEmbed.fields.map(f => {
+          if (f.name.startsWith(ATTENDING_FIELD_PREFIX)) {
+            return { name: `${ATTENDING_FIELD_PREFIX} (${attendingIds.length})`, value: buildAttendanceFieldValue(attendingIds), inline: f.inline };
+          }
+          if (f.name.startsWith(TENTATIVE_FIELD_PREFIX)) {
+            return { name: `${TENTATIVE_FIELD_PREFIX} (${tentativeIds.length})`, value: buildAttendanceFieldValue(tentativeIds), inline: f.inline };
+          }
+          if (f.name.startsWith(NOT_ATTENDING_FIELD_PREFIX)) {
+            return { name: `${NOT_ATTENDING_FIELD_PREFIX} (${notAttendingIds.length})`, value: buildAttendanceFieldValue(notAttendingIds), inline: f.inline };
+          }
+          return { name: f.name, value: f.value, inline: f.inline };
+        });
 
         const updatedEmbed = EmbedBuilder.from(sourceEmbed).setFields(updatedFields);
 
